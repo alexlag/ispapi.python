@@ -42,7 +42,7 @@ class TexterraAPI(modis.ModisAPI):
 		'posTagging': {
 				'path': 'nlp/pos',
 				'params': {
-					'class': 'ru.ispras.texterra.core.nlp.datamodel.pos.IPOSToken',
+					'class': 'ru.ispras.texterra.core.nlp.datamodel.pos.POSToken',
 					'filtering': 'KEEPING'
 				}
 		},
@@ -103,14 +103,6 @@ class TexterraAPI(modis.ModisAPI):
 				'path': 'nlp/polarity',
 				'params': {
 					'class': 'ru.ispras.texterra.core.nlp.datamodel.SentimentPolarity',
-					'filtering': 'KEEPING'
-				}
-
-		},
-		'aspectExtraction': {
-				'path': 'nlp/aspectsentiment',
-				'params': {
-					'class': 'aspect-sentiment',
 					'filtering': 'KEEPING'
 				}
 
@@ -233,21 +225,6 @@ class TexterraAPI(modis.ModisAPI):
 			pass
 		return { 'domain' :usedDomain, 'polarity': sentiment }
 
-	def aspectExtraction(self, text):
-		"""Extracts aspect-sentiment pairs from the given text. Currently only movie domain is supported."""
-		try:
-			result = []
-			extractedAspects = self.aspectExtractionAnnotate(text)
-			for extractedAspect in extractedAspects:
-				result.append({
-					'text': extractedAspect['text'],
-					'aspect': extractedAspect['value']['aspect']['#text'],
-					'polarity': extractedAspect['value']['polarity']
-				})
-			return result	
-		except KeyError:
-			return []	
-
 	def disambiguation(self, text):
 		"""Detects the most appropriate meanings (concepts) for terms occurred in a given text.
 			Note: this method returns Texterra annotations"""
@@ -321,11 +298,6 @@ class TexterraAPI(modis.ModisAPI):
 		"""Detects whether the given text has positive, negative or no sentiment.
 			Note: this method returns Texterra annotations"""
 		return self.__presetNLP('polarityDetection', text)
-
-	def aspectExtractionAnnotate(self, text):
-		"""Extracts aspect-sentiment pairs from the given text. Currently only movie domain is supported.
-			Note: this method returns Texterra annotations"""
-		return self.__presetNLP('aspectExtraction', text)
 
 	def domainPolarityDetectionAnnotate(self, text, domain=''):
 		"""Detects whether the given text has positive, negative, or no sentiment, with respect to domain. 
