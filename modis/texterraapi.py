@@ -4,7 +4,7 @@ import modisapi as modis
 class TexterraAPI(modis.ModisAPI):
 	"""This class provides methods to work with Texterra REST via OpenAPI, including NLP and EKB methods and custom queriesю
 		Note that NLP methods return annotations only"""
-	
+
 	# Default Texterra path
 	texterraName = 'texterra'
 	texterraVersion = 'v3.1'
@@ -117,7 +117,7 @@ class TexterraAPI(modis.ModisAPI):
 		},
 		'tweetNormalization': {
 				'path': 'nlp/twitterdetection',
-				'params': 
+				'params':
 				{
 					'class': ['sentence',
 						'language',
@@ -125,9 +125,17 @@ class TexterraAPI(modis.ModisAPI):
 					'filtering': 'REMOVING'
 				}
 
+		},
+		'syntaxDetection': {
+				'path': 'nlp/syntax',
+				'params': {
+					'class': 'ru.ispras.texterra.core.nlp.datamodel.syntax.SyntaxRelation',
+					'filtering': 'KEEPING'
+				}
+
 		}
 	}
- 
+
  	# Path and parameters for preset KBM queries
 	KBMSpecs = {
 		'termPresence': {
@@ -176,7 +184,7 @@ class TexterraAPI(modis.ModisAPI):
 		}
 	}
 
-	
+
 	def __init__(self, key, name=None, ver=None):
 		"""Provide only apikey to use default Texterra service name and version."""
 		if name == None:
@@ -197,9 +205,9 @@ class TexterraAPI(modis.ModisAPI):
 			for keyConcept in keyConcepts:
 				keyConcept['concept']['weight'] = keyConcept['double']
 				result.append(keyConcept['concept'])
-			return result	
+			return result
 		except KeyError:
-			return []	
+			return []
 
 	def sentimentAnalysis(self, text):
 		"""Detects whether the given text has positive, negative or no sentiment."""
@@ -209,7 +217,7 @@ class TexterraAPI(modis.ModisAPI):
 			return 'NEUTRAL'
 
 	def domainSentimentAnalysis(self, text, domain=''):
-		"""Detects whether the given text has positive, negative, or no sentiment, with respect to domain. 
+		"""Detects whether the given text has positive, negative, or no sentiment, with respect to domain.
 			If domain isn't provided, Domain detection is applied, this way method tries to achieve best results.
 			If no domain is detected general domain algorithm is applied."""
 		try:
@@ -300,14 +308,14 @@ class TexterraAPI(modis.ModisAPI):
 		return self.__presetNLP('polarityDetection', text)
 
 	def domainPolarityDetectionAnnotate(self, text, domain=''):
-		"""Detects whether the given text has positive, negative, or no sentiment, with respect to domain. 
+		"""Detects whether the given text has positive, negative, or no sentiment, with respect to domain.
 			If domain isn't provided, Domain detection is applied, this way method tries to achieve best results.
 			If no domain is detected general domain algorithm is applied.
 				Note: this method returns Texterra annotations"""
 		specs = TexterraAPI.NLPSpecs['domainPolarityDetection']
 		if domain != '':
 			domain = '({})'.format(domain)
-		
+
 		try:
 			result = self.customQuery(specs['path'].format(domain), specs['params'], {'text': text})['NLP-document']['annotations']['I-annotation']
 		except KeyError:
@@ -330,13 +338,24 @@ class TexterraAPI(modis.ModisAPI):
 			And also: Stop-words, Misspellings, Spelling suggestions, Spelling corrections."""
 		return self.__presetNLP('tweetNormalization', text)
 
+	def syntaxDetection(self, text):
+		"""Detects syntax relations """
+		result = self.__presetNLP('syntaxDetection', text)
+		for an in result:
+			if 'parent-token' in an['value']:
+				start = int(an['value']['parent-token']['start'])
+				end = int(an['value']['parent-token']['end'])
+				an['value']['parent-token']['text'] = text[start:end]
+				an['value']['parent-token']['annotated-text'] = text[start:end]
+		return result
+
 	# Section of KBM methods
 	def __wrapConcepts(self, concepts):
 		"""Utility wrapper for matrix parameters"""
 		if isinstance(concepts, list):
 			return ''.join(['id={};'.format(concept) for concept in concepts])
 		else:
-			return 'id={};'.format(concepts) 
+			return 'id={};'.format(concepts)
 
 	def termPresence(self, term):
 		"""Determines if Knowledge base contains the specified term."""
@@ -358,7 +377,7 @@ class TexterraAPI(modis.ModisAPI):
 		return self.__presetKBM('termCommonness', [term, concept])
 
 	def neighbours(self, concepts, linkType=None, nodeType=None, minDepth=None, maxDepth=None):
-		"""Return neighbour concepts for the given concepts(list or single concept, each concept is {id}:{kbname}). 
+		"""Return neighbour concepts for the given concepts(list or single concept, each concept is {id}:{kbname}).
 			If at least one traverse parameter(check REST Documentation for values) is specified, all other parameters should also be specified """
 		concept = self.__wrapConcepts(concepts)
 		traverse = ''
@@ -373,7 +392,7 @@ class TexterraAPI(modis.ModisAPI):
 		return self.__presetKBM('neighbours', [concept, traverse])
 
 	def neighboursSize(self, concepts, linkType=None, nodeType=None, minDepth=None, maxDepth=None):
-		"""Return neighbour concepts size for the given concepts(list or single concept, each concept is {id}:{kbname}). 
+		"""Return neighbour concepts size for the given concepts(list or single concept, each concept is {id}:{kbname}).
 			If at least one traverse parameter(check REST Documentation for values) is specified, all other parameters should also be specified """
 		concept = self.__wrapConcepts(concepts)
 		traverse = ''
@@ -389,7 +408,7 @@ class TexterraAPI(modis.ModisAPI):
 		return self.__presetKBM('neighbours', [concept, traverse])
 
 	def similarityGraph(self, concepts, linkWeight='MAX'):
-		"""Compute similarity for each pair of concepts(list or single concept, each concept is {id}:{kbname}). 
+		"""Compute similarity for each pair of concepts(list or single concept, each concept is {id}:{kbname}).
 			linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
 		param = self.__wrapConcepts(concepts)
 		param += 'linkWeight=' + linkWeight
@@ -404,7 +423,7 @@ class TexterraAPI(modis.ModisAPI):
 		return self.__presetKBM('allPairsSimilarity', [first, second])
 
 	def similarityToVirtualArticle(self, concepts, virtualAricle, linkWeight='MAX'):
-		"""Compute similarity from each concept from the first list to all concepts(list or single concept, each concept is {id}:{kbname}) from the second list as a whole. 
+		"""Compute similarity from each concept from the first list to all concepts(list or single concept, each concept is {id}:{kbname}) from the second list as a whole.
 			Links of second list concepts(each concept is {id}:{kbname}) are collected together, thus forming a "virtual" article, similarity to which is computed.
 			linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
 		first = self.__wrapConcepts(concepts)
@@ -413,8 +432,8 @@ class TexterraAPI(modis.ModisAPI):
 		return self.__presetKBM('similarityToVirtualArticle', [first, second])
 
 	def similarityBetweenVirtualArticle(self, firstVirtualAricle, secondVirtualArticle, linkWeight='MAX'):
-		"""Compute similarity between two sets of concepts(list or single concept, each concept is {id}:{kbname}) as between "virtual" articles from these sets. 
-			The links of each virtual article are composed of links of the collection of concepts. 
+		"""Compute similarity between two sets of concepts(list or single concept, each concept is {id}:{kbname}) as between "virtual" articles from these sets.
+			The links of each virtual article are composed of links of the collection of concepts.
 			linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
 		first = self.__wrapConcepts(firstVirtualAricle)
 		first += 'linkWeight={};'.format(linkWeight)
@@ -478,7 +497,7 @@ class TexterraAPI(modis.ModisAPI):
 		"""Utility NLP part method"""
 		specs = TexterraAPI.NLPSpecs[methodName]
 		try:
-			result = self.customQuery(specs['path'], specs['params'], {'text': text})['NLP-document']['annotations']['I-annotation'] 
+			result = self.customQuery(specs['path'], specs['params'], {'text': text})['NLP-document']['annotations']['I-annotation']
 		except KeyError:
 			return []
 
@@ -502,5 +521,5 @@ class TexterraAPI(modis.ModisAPI):
 			result = self.customQuery(specs['path'].format(*pathParam), queryParam)
 		else:
 			result = self.customQuery(specs['path'].format(pathParam), queryParam)
-		
+
 		return result
