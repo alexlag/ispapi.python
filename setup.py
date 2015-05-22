@@ -4,11 +4,11 @@ from setuptools import setup
 
 setup(
     name='modis',
-    version='0.1.2',
+    version='0.1.3',
     packages=['modis'],
     install_requires=[
-    	'requests',
-    	'xmltodict'
-	],
+      'requests',
+      'xmltodict'
+  ],
     py_modules=['modis'],
 )

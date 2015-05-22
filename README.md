@@ -41,7 +41,7 @@ result = t.customQuery(path, query, form) # for POST request
 6. Methods return dictionary, so you can navigate through it according to [API documentation](https://api.ispras.ru/dev/rest):
 ```python
 for annotation in tags:
-		print an['text']
+		print annotation['text']
 ```
 Use '@' before atrribute names and '#text' to access own text of nodes. 
 Use only node name to access its text if there are no attributes or subnodes:

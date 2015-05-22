@@ -1,41 +1,41 @@
 # -*- coding: utf-8 -*-
-import modisapi as modis
-class TwitterAPI(modis.ModisAPI):
-	"""This class provides methods to work with Twitter NLP REST via OpenAPI"""
-	
-	# Default Twitter NLP path
-	twitterName = 'twitter-nlp'
-	twitterVersion = '1.0'
+from . import modisapi
+class TwitterAPI(modisapi.ModisAPI):
+  """This class provides methods to work with Twitter NLP REST via OpenAPI"""
 
-	specs = {
-		'path': 'extract',
-		'params': {}
-	}
+  # Default Twitter NLP path
+  twitterName = 'twitter-nlp'
+  twitterVersion = '1.0'
 
-	def __init__(self, key, name=None, ver=None):
-		"""Provide only apikey to use default Twitter NLP service name and version."""
-		if name == None:
-			name = TwitterAPI.twitterName
-		if ver == None:
-			ver = TwitterAPI.twitterVersion
-		modis.ModisAPI.__init__(self, key, name, ver)
+  specs = {
+    'path': 'extract',
+    'params': {}
+  }
 
-	def extractDDE(self, lang, username, screenname, description, tweets):
-		"""Extracts demographic attributes from provided Twitter info. All info is required, but can be empty"""
-		if isinstance(tweets, list):
-			tweets = ' '.join(tweets)
-		form = {
-				'lang': lang,
-				'username': username,
-				'screenname': screenname,
-				'description': description,
-				'tweet': tweets
-		}
-		return self.POST('extract', {}, form)
+  def __init__(self, key, name=None, ver=None):
+    """Provide only apikey to use default Twitter NLP service name and version."""
+    if name == None:
+      name = TwitterAPI.twitterName
+    if ver == None:
+      ver = TwitterAPI.twitterVersion
+    modisapi.ModisAPI.__init__(self, key, name, ver)
 
-	def customQuery(self, path, query, form=None):
-		"""Invoke custom request to Twitter NLP"""
-		if form:
-			return self.POST(path, query, form)
-		else:
-			return self.GET(path, query)
+  def extractDDE(self, lang, username, screenname, description, tweets):
+    """Extracts demographic attributes from provided Twitter info. All info is required, but can be empty"""
+    if isinstance(tweets, list):
+      tweets = ' '.join(tweets)
+    form = {
+        'lang': lang,
+        'username': username,
+        'screenname': screenname,
+        'description': description,
+        'tweet': tweets
+    }
+    return self.POST('extract', {}, form)
+
+  def customQuery(self, path, query, form=None):
+    """Invoke custom request to Twitter NLP"""
+    if form:
+      return self.POST(path, query, form)
+    else:
+      return self.GET(path, query)
