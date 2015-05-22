@@ -335,7 +335,7 @@ class TexterraAPI(modisapi.ModisAPI):
       start = int(an['start'])
       end = int(an['end'])
       an['text'] = text[start:end]
-      an['annotated-text'] = text[start:end]
+      an['annotated-text'] = text
     return result
 
   def tweetNormalization(self, text):
@@ -351,7 +351,7 @@ class TexterraAPI(modisapi.ModisAPI):
         start = int(an['value']['parent-token']['start'])
         end = int(an['value']['parent-token']['end'])
         an['value']['parent-token']['text'] = text[start:end]
-        an['value']['parent-token']['annotated-text'] = text[start:end]
+        an['value']['parent-token']['annotated-text'] = text
     return result
 
   # Section of KBM methods
@@ -515,7 +515,7 @@ class TexterraAPI(modisapi.ModisAPI):
       start = int(an['start'])
       end = int(an['end'])
       an['text'] = text[start:end]
-      an['annotated-text'] = text[start:end]
+      an['annotated-text'] = text
     return result
 
   def __presetKBM(self, methodName, pathParam, queryParam={}):
