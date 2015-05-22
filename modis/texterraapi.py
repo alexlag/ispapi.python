@@ -12,7 +12,7 @@ class TexterraAPI(modisapi.ModisAPI):
   # Path and parameters for preset NLP queries
   NLPSpecs = {
     'languageDetection': {
-        'path': 'nlp/ru.ispras.texterra.core.nlp.pipelines.LanguageDetectionPipeline',
+        'path': 'nlp/language',
         'params': {
           'class': 'ru.ispras.texterra.core.nlp.datamodel.Language',
           'filtering': 'KEEPING'
@@ -47,28 +47,28 @@ class TexterraAPI(modisapi.ModisAPI):
         }
     },
     'spellingCorrection': {
-        'path': 'nlp/ru.ispras.texterra.core.nlp.annotators.spelling.SpellingCorrector',
+        'path': 'nlp/spellingcorrection',
         'params': {
           'class': 'ru.ispras.texterra.core.nlp.datamodel.SpellingCorrection',
           'filtering': 'KEEPING'
         }
     },
     'namedEntities': {
-        'path': 'nlp/ru.ispras.texterra.core.nlp.pipelines.NETaggingPipeline',
+        'path': 'nlp/namedentities',
         'params': {
           'class': 'ru.ispras.texterra.core.nlp.datamodel.ne.NamedEntityToken',
           'filtering': 'KEEPING'
         }
     },
     'termDetection': {
-        'path': 'nlp/ru.ispras.texterra.core.nlp.pipelines.TermDetectionPipeline',
+        'path': 'nlp/term',
         'params': {
           'class': 'ru.ispras.texterra.core.nlp.datamodel.Frame',
           'filtering': 'KEEPING'
         }
     },
     'disambiguation': {
-        'path': 'nlp/ru.ispras.texterra.core.nlp.pipelines.DisambiguationPipeline',
+        'path': 'nlp/disambiguation',
         'params': {
           'class': 'ru.ispras.texterra.core.nlp.datamodel.DisambiguatedPhrase',
           'filtering': 'KEEPING'
@@ -76,7 +76,7 @@ class TexterraAPI(modisapi.ModisAPI):
 
     },
     'keyConcepts': {
-        'path': 'nlp/ru.ispras.texterra.core.nlp.pipelines.KeyConceptsPipeline',
+        'path': 'nlp/keyconcepts',
         'params': {
           'class': 'ru.ispras.texterra.core.nlp.datamodel.KeyconceptsSemanticContext',
           'filtering': 'KEEPING'
@@ -110,7 +110,10 @@ class TexterraAPI(modisapi.ModisAPI):
     'domainPolarityDetection': {
         'path': 'nlp/domainpolarity{}',
         'params': {
-          'class': { 'domain', 'sentiment-polarity' },
+          'class': [
+            'domain',
+            'sentiment-polarity'
+          ],
           'filtering': 'KEEPING'
         }
 
@@ -119,9 +122,11 @@ class TexterraAPI(modisapi.ModisAPI):
         'path': 'nlp/twitterdetection',
         'params':
         {
-          'class': ['sentence',
+          'class': [
+            'sentence',
             'language',
-            'token'],
+            'token'
+          ],
           'filtering': 'REMOVING'
         }
 
