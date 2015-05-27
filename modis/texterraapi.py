@@ -54,7 +54,7 @@ class TexterraAPI(modisapi.ModisAPI):
         }
     },
     'namedEntities': {
-        'path': 'nlp/namedentities',
+        'path': 'nlp/namedentity',
         'params': {
           'class': 'ru.ispras.texterra.core.nlp.datamodel.ne.NamedEntityToken',
           'filtering': 'KEEPING'
@@ -175,7 +175,7 @@ class TexterraAPI(modisapi.ModisAPI):
       'path': 'similarity/{0}/toVirtualArticle/{1}',
       'params': {}
     },
-    'similarityBetweenVirtualArticle': {
+    'similarityBetweenVirtualArticles': {
       'path': 'similarity/{0}/betweenVirtualArticles/{1}',
       'params': {}
     },
@@ -207,6 +207,8 @@ class TexterraAPI(modisapi.ModisAPI):
     try:
       result = []
       keyConcepts = self.keyConceptsAnnotate(text)[0]['value']['concepts-weights']['entry']
+      if isinstance(keyConcepts, dict):
+        keyConcepts = [keyConcepts]
       for keyConcept in keyConcepts:
         keyConcept['concept']['weight'] = keyConcept['double']
         result.append(keyConcept['concept'])
@@ -436,14 +438,14 @@ class TexterraAPI(modisapi.ModisAPI):
     second = self.__wrapConcepts(virtualAricle)
     return self.__presetKBM('similarityToVirtualArticle', [first, second])
 
-  def similarityBetweenVirtualArticle(self, firstVirtualAricle, secondVirtualArticle, linkWeight='MAX'):
+  def similarityBetweenVirtualArticles(self, firstVirtualAricle, secondVirtualArticle, linkWeight='MAX'):
     """Compute similarity between two sets of concepts(list or single concept, each concept is {id}:{kbname}) as between "virtual" articles from these sets.
       The links of each virtual article are composed of links of the collection of concepts.
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
     first = self.__wrapConcepts(firstVirtualAricle)
     first += 'linkWeight={};'.format(linkWeight)
     second = self.__wrapConcepts(secondVirtualArticle)
-    return self.__presetKBM('similarityBetweenVirtualArticle', [first, second])
+    return self.__presetKBM('similarityBetweenVirtualArticles', [first, second])
 
   def similarOverFirstNeighbours(self, concepts, linkWeight='MAX', offset=None, limit=None):
     """Search for similar concepts among the first neighbours of the given ones(list or single concept, each concept is {id}:{kbname}).
@@ -475,7 +477,7 @@ class TexterraAPI(modisapi.ModisAPI):
       query.update({'among': among})
     return self.__presetKBM('similarOverFilteredNeighbours', path, query)
 
-  def getAttributes(self, concepts, atrList):
+  def getAttributes(self, concepts, atrList=[]):
     """Get attributes for concepts(list or single concept, each concept is {id}:{kbname}).
       Supported attributes:
         coordinates - GPS coordinates
