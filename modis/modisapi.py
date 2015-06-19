@@ -20,7 +20,7 @@ class ModisAPI(object):
     """Method for invoking ModisAPI GET request"""
     url = self.url + path;
     request_params['apikey'] = self.apikey
-    page = requests.get(url, params=request_params, timeout=20)
+    page = requests.get(url, params=request_params, timeout=60)
     if page.status_code == 200:
       xmldict = xmltodict.parse(page.text)
       return xmldict
@@ -31,7 +31,7 @@ class ModisAPI(object):
     """Method for invoking ModisAPI POST request"""
     url = self.url + path;
     request_params['apikey'] = self.apikey
-    page = requests.post(url, params=request_params, data=form_params, timeout=20)
+    page = requests.post(url, params=request_params, data=form_params, timeout=60)
     if page.status_code == 200:
       xmldict = xmltodict.parse(page.text)
       return xmldict
