@@ -39,10 +39,11 @@ class TexterraAPITest(unittest.TestCase):
     self.assertIsInstance(self.texterra.disambiguation(self.ru_text), list)
 
   def test_sentimentAnalysis(self):
-    self.assertIsInstance(self.texterra.sentimentAnalysis(self.en_text), str)
-    self.assertIsInstance(self.texterra.sentimentAnalysis(self.ru_text), str)
-    self.assertIsInstance(self.texterra.sentimentAnalysis(self.en_tweet), str)
-    self.assertIsInstance(self.texterra.sentimentAnalysis(self.ru_tweet), str)
+    import sys
+    self.assertIsInstance(self.texterra.sentimentAnalysis(self.en_text), str if sys.version_info[0] == 3 else basestring)
+    self.assertIsInstance(self.texterra.sentimentAnalysis(self.ru_text), str if sys.version_info[0] == 3 else basestring)
+    self.assertIsInstance(self.texterra.sentimentAnalysis(self.en_tweet), str if sys.version_info[0] == 3 else basestring)
+    self.assertIsInstance(self.texterra.sentimentAnalysis(self.ru_tweet), str if sys.version_info[0] == 3 else basestring)
 
   def test_domainSentimentAnalysis(self):
     self.assertIsInstance(self.texterra.domainSentimentAnalysis(self.en_text), dict)
