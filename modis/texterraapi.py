@@ -414,12 +414,38 @@ class TexterraAPI(modisapi.ModisAPI):
     traverse+='/size'
     return self.__presetKBM('neighbours', [concept, traverse])
 
+  def __transformGraph(self, concepts, simGraph):
+    concept2id = dict()
+    for concept in simGraph['concept-2-position']['entry']:
+      stringConcept = '{0}:{1}'.format(concept['concept']['id'], concept['concept']['kbname'])
+      concept2id[stringConcept] = int(concept['integer'])
+
+    fullMatrix = dict()
+    for pos1, item in enumerate(simGraph['similarity']['double']):
+      if not pos1 in fullMatrix:
+        fullMatrix[pos1] = dict()
+      for add, val in enumerate(item['#text'].split(", ")):
+        pos2 = pos1 + add + 1
+        if not pos2 in fullMatrix:
+          fullMatrix[pos2] = dict()
+        fullMatrix[pos1][pos2] = float(val)
+        fullMatrix[pos2][pos1] = fullMatrix[pos1][pos2]
+
+    result = dict()
+    for concept1 in concepts:
+      result[concept1] = dict()
+      for concept2 in concepts:
+        id1, id2 = concept2id[concept1], concept2id[concept2]
+        result[concept1][concept2] = fullMatrix[id1][id2] if id1 != id2 else 1.0
+
+    return result
+
   def similarityGraph(self, concepts, linkWeight='MAX'):
     """Compute similarity for each pair of concepts(list or single concept, each concept is {id}:{kbname}).
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
     param = self.__wrapConcepts(concepts)
     param += 'linkWeight=' + linkWeight
-    return self.__presetKBM('similarityGraph', param)
+    return self.__transformGraph(concepts, self.__presetKBM('similarityGraph', param)['full-similarity-graph'])
 
   def allPairsSimilarity(self, firstConcepts, secondConcepts, linkWeight='MAX'):
     """Computes sum of similarities from each concepts(list or single concept, each concept is {id}:{kbname}) from the first list to all concepts(list or single concept, each concept is {id}:{kbname}) from the second one.
