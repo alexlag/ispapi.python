@@ -364,6 +364,13 @@ class TexterraAPI(modisapi.ModisAPI):
     else:
       return 'id={};'.format(concepts)
 
+  def __wrapConceptsKbname(self, concepts, kbname):
+    """Utility wrapper for matrix parameters"""
+    if isinstance(concepts, list):
+      return ''.join(['id={0}:{1};'.format(concept, kbname) for concept in concepts])
+    else:
+      return 'id={0}:{1};'.format(concepts, kbname)
+
   def termPresence(self, term):
     """Determines if Knowledge base contains the specified term."""
     return self.__presetKBM('termPresence', term)
@@ -417,8 +424,8 @@ class TexterraAPI(modisapi.ModisAPI):
   def __transformGraph(self, concepts, simGraph):
     concept2id = dict()
     for concept in simGraph['concept-2-position']['entry']:
-      stringConcept = '{0}:{1}'.format(concept['concept']['id'], concept['concept']['kbname'])
-      concept2id[stringConcept] = int(concept['integer'])
+      idConcept =int(concept['concept']['id'])
+      concept2id[idConcept] = int(concept['integer'])
 
     fullMatrix = dict()
     for pos1, item in enumerate(simGraph['similarity']['double']):
@@ -440,10 +447,10 @@ class TexterraAPI(modisapi.ModisAPI):
 
     return result
 
-  def similarityGraph(self, concepts, linkWeight='MAX'):
-    """Compute similarity for each pair of concepts(list or single concept, each concept is {id}:{kbname}).
+  def similarityGraph(self, concepts, kbname, linkWeight='MAX'):
+    """Compute similarity for each pair of concepts(list or single concept, each concept is {id}, kbname is separated).
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
-    param = self.__wrapConcepts(concepts)
+    param = self.__wrapConceptsKbname(concepts, kbname)
     param += 'linkWeight=' + linkWeight
     return self.__transformGraph(concepts, self.__presetKBM('similarityGraph', param)['full-similarity-graph'])
 
