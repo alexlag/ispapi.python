@@ -117,49 +117,49 @@ class TexterraAPITest(unittest.TestCase):
 
   def test_termCommonness(self):
     self.assertIsInstance(self.texterra.termCommonness('android'), dict)
-    self.assertIsInstance(self.texterra.termCommonness('android', '713:enwiki'), dict)
+    self.assertIsInstance(self.texterra.termCommonness('android', 713, 'enwiki'), dict)
 
   def test_neignbours(self):
-    self.assertIsInstance(self.texterra.neighbours('12:enwiki'), dict)
-    self.assertIsInstance(self.texterra.neighbours('12:enwiki', linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
-    self.assertIsInstance(self.texterra.neighbours(['12:enwiki', '713:enwiki']), dict)
-    self.assertIsInstance(self.texterra.neighbours(['12:enwiki', '713:enwiki'], linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
+    self.assertIsInstance(self.texterra.neighbours(12, 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.neighbours(12, 'enwiki', linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
+    self.assertIsInstance(self.texterra.neighbours([12, 713], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.neighbours([12, 713], 'enwiki', linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
 
   def test_neighboursSize(self):
-    self.assertIsInstance(self.texterra.neighboursSize('12:enwiki'), dict)
-    self.assertIsInstance(self.texterra.neighboursSize('12:enwiki', linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
-    self.assertIsInstance(self.texterra.neighboursSize(['12:enwiki', '713:enwiki']), dict)
-    self.assertIsInstance(self.texterra.neighboursSize(['12:enwiki', '713:enwiki'], linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
+    self.assertIsInstance(self.texterra.neighboursSize(12, 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.neighboursSize(12, 'enwiki', linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
+    self.assertIsInstance(self.texterra.neighboursSize([12, 713], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.neighboursSize([12, 713], 'enwiki', linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
 
   def test_similarityGraph(self):
-    self.assertIsInstance(self.texterra.similarityGraph(['12:enwiki', '13137:enwiki', '156327:enwiki']), dict)
-    self.assertIsInstance(self.texterra.similarityGraph(['12:enwiki', '13137:enwiki', '156327:enwiki'], 'MIN'), dict)
+    self.assertIsInstance(self.texterra.similarityGraph([12, 13137, 156327], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.similarityGraph([12, 13137, 156327], 'enwiki', 'MIN'), dict)
 
   def test_allPairsSimilarity(self):
-    self.assertIsInstance(self.texterra.allPairsSimilarity(['12:enwiki', '13137:enwiki'], ['156327:enwiki', '15942292:enwiki', '1921431:enwiki']), dict)
-    self.assertIsInstance(self.texterra.allPairsSimilarity(['12:enwiki', '13137:enwiki'], ['156327:enwiki', '15942292:enwiki', '1921431:enwiki'], 'MIN'), dict)
+    self.assertIsInstance(self.texterra.allPairsSimilarity([12, 13137], [156327, 15942292, 1921431], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.allPairsSimilarity([12, 13137], [156327, 15942292, 1921431], 'enwiki', 'MIN'), dict)
 
   def test_similarityToVirtualArticle(self):
-    self.assertIsInstance(self.texterra.similarityToVirtualArticle(['12:enwiki', '13137:enwiki'], ['156327:enwiki', '15942292:enwiki', '1921431:enwiki']), dict)
-    self.assertIsInstance(self.texterra.similarityToVirtualArticle(['12:enwiki', '13137:enwiki'], ['156327:enwiki', '15942292:enwiki', '1921431:enwiki'], 'MIN'), dict)
+    self.assertIsInstance(self.texterra.similarityToVirtualArticle([12, 13137], [156327, 15942292, 1921431], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.similarityToVirtualArticle([12, 13137], [156327, 15942292, 1921431], 'enwiki', 'MIN'), dict)
 
   def test_similarityBetweenVirtualArticles(self):
-    self.assertIsInstance(self.texterra.similarityBetweenVirtualArticles(['12:enwiki', '13137:enwiki'], ['156327:enwiki', '15942292:enwiki', '1921431:enwiki']), dict)
-    self.assertIsInstance(self.texterra.similarityBetweenVirtualArticles(['12:enwiki', '13137:enwiki'], ['156327:enwiki', '15942292:enwiki', '1921431:enwiki'], 'MIN'), dict)
+    self.assertIsInstance(self.texterra.similarityBetweenVirtualArticles([12, 13137], [156327, 15942292, 1921431], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.similarityBetweenVirtualArticles([12, 13137], [156327, 15942292, 1921431], 'enwiki', 'MIN'), dict)
 
   def test_similarOverFirstNeighbours(self):
-    self.assertIsInstance(self.texterra.similarOverFirstNeighbours('12:enwiki'), dict)
-    self.assertIsInstance(self.texterra.similarOverFirstNeighbours('12:enwiki', linkWeight='MIN', offset=1, limit=3), dict)
+    self.assertIsInstance(self.texterra.similarOverFirstNeighbours(12, 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.similarOverFirstNeighbours(12, 'enwiki', linkWeight='MIN', offset=1, limit=3), dict)
 
   def test_similarOverFilteredNeighbours(self):
-    self.assertIsInstance(self.texterra.similarOverFilteredNeighbours('12:enwiki'), dict)
-    self.assertIsInstance(self.texterra.similarOverFilteredNeighbours('12:enwiki', linkWeight='MIN', offset=1, limit=3, among='PORTION(0.2)'), dict)
+    self.assertIsInstance(self.texterra.similarOverFilteredNeighbours(12, 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.similarOverFilteredNeighbours(12, 'enwiki', linkWeight='MIN', offset=1, limit=3, among='PORTION(0.2)'), dict)
 
   def test_getAttributes(self):
-    self.assertIsInstance(self.texterra.getAttributes('12:enwiki'), dict)
-    self.assertIsInstance(self.texterra.getAttributes(['12:enwiki', '13137:enwiki']), dict)
-    self.assertIsInstance(self.texterra.getAttributes('12:enwiki', ['url(en)', 'type']), dict)
-    self.assertIsInstance(self.texterra.getAttributes(['12:enwiki', '13137:enwiki'], ['url(en)', 'title']), dict)
+    self.assertIsInstance(self.texterra.getAttributes(12, 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.getAttributes([12, 13137], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.getAttributes(12, 'enwiki', ['url(en)', 'type']), dict)
+    self.assertIsInstance(self.texterra.getAttributes([12, 13137], 'enwiki', ['url(en)', 'title']), dict)
 
 # Twitter NLP Tests
 

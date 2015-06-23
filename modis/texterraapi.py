@@ -357,14 +357,7 @@ class TexterraAPI(modisapi.ModisAPI):
     return result
 
   # Section of KBM methods
-  def __wrapConcepts(self, concepts):
-    """Utility wrapper for matrix parameters"""
-    if isinstance(concepts, list):
-      return ''.join(['id={};'.format(concept) for concept in concepts])
-    else:
-      return 'id={};'.format(concepts)
-
-  def __wrapConceptsKbname(self, concepts, kbname):
+  def __wrapConcepts(self, concepts, kbname):
     """Utility wrapper for matrix parameters"""
     if isinstance(concepts, list):
       return ''.join(['id={0}:{1};'.format(concept, kbname) for concept in concepts])
@@ -383,17 +376,16 @@ class TexterraAPI(modisapi.ModisAPI):
     """Return concepts resource from the Knowledge base corresponding to the found meanings of the given term."""
     return self.__presetKBM('termMeanings', term)
 
-  def termCommonness(self, term, concept=''):
+  def termCommonness(self, term, cid=None, kbname=None):
     """If concept isn't provided, returns concepts with their commonness, corresponding to the found meanings of the given term. Commonness denotes, how often the given term is associated with the given concept.
-      With concept(format is {id}:{kbname}) returns commonness of given concept for the given term."""
-    if len(concept) != 0:
-      concept = 'id=' + concept
+      With concept(format is {id} and {kbname}) returns commonness of given concept for the given term."""
+    concept = 'id={0}:{1}'.format(cid, kbname) if cid is not None else ''
     return self.__presetKBM('termCommonness', [term, concept])
 
-  def neighbours(self, concepts, linkType=None, nodeType=None, minDepth=None, maxDepth=None):
-    """Return neighbour concepts for the given concepts(list or single concept, each concept is {id}:{kbname}).
+  def neighbours(self, concepts, kbname, linkType=None, nodeType=None, minDepth=None, maxDepth=None):
+    """Return neighbour concepts for the given concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
       If at least one traverse parameter(check REST Documentation for values) is specified, all other parameters should also be specified """
-    concept = self.__wrapConcepts(concepts)
+    concept = self.__wrapConcepts(concepts, kbname)
     traverse = ''
     if linkType:
       traverse += ';linkType=' + linkType
@@ -405,10 +397,10 @@ class TexterraAPI(modisapi.ModisAPI):
       traverse += ';maxDepth=' + str(maxDepth)
     return self.__presetKBM('neighbours', [concept, traverse])
 
-  def neighboursSize(self, concepts, linkType=None, nodeType=None, minDepth=None, maxDepth=None):
-    """Return neighbour concepts size for the given concepts(list or single concept, each concept is {id}:{kbname}).
+  def neighboursSize(self, concepts, kbname, linkType=None, nodeType=None, minDepth=None, maxDepth=None):
+    """Return neighbour concepts size for the given concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
       If at least one traverse parameter(check REST Documentation for values) is specified, all other parameters should also be specified """
-    concept = self.__wrapConcepts(concepts)
+    concept = self.__wrapConcepts(concepts, kbname)
     traverse = ''
     if linkType:
       traverse += ';linkType=' + linkType
@@ -450,43 +442,43 @@ class TexterraAPI(modisapi.ModisAPI):
   def similarityGraph(self, concepts, kbname, linkWeight='MAX'):
     """Compute similarity for each pair of concepts(list or single concept, each concept is {id}, kbname is separated).
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
-    param = self.__wrapConceptsKbname(concepts, kbname)
+    param = self.__wrapConcepts(concepts, kbname)
     param += 'linkWeight=' + linkWeight
     return self.__transformGraph(concepts, self.__presetKBM('similarityGraph', param)['full-similarity-graph'])
 
-  def allPairsSimilarity(self, firstConcepts, secondConcepts, linkWeight='MAX'):
-    """Computes sum of similarities from each concepts(list or single concept, each concept is {id}:{kbname}) from the first list to all concepts(list or single concept, each concept is {id}:{kbname}) from the second one.
+  def allPairsSimilarity(self, firstConcepts, secondConcepts, kbname, linkWeight='MAX'):
+    """Computes sum of similarities from each concepts(list or single concept, each concept is {id}, {kbname} is separate parameter) from the first list to all concepts(list or single concept, each concept is {id}, {kbname} is separate parameter) from the second one.
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
-    first = self.__wrapConcepts(firstConcepts)
+    first = self.__wrapConcepts(firstConcepts, kbname)
     first += 'linkWeight={};'.format(linkWeight)
-    second = self.__wrapConcepts(secondConcepts)
+    second = self.__wrapConcepts(secondConcepts, kbname)
     return self.__presetKBM('allPairsSimilarity', [first, second])
 
-  def similarityToVirtualArticle(self, concepts, virtualAricle, linkWeight='MAX'):
-    """Compute similarity from each concept from the first list to all concepts(list or single concept, each concept is {id}:{kbname}) from the second list as a whole.
-      Links of second list concepts(each concept is {id}:{kbname}) are collected together, thus forming a "virtual" article, similarity to which is computed.
+  def similarityToVirtualArticle(self, concepts, virtualAricle, kbname, linkWeight='MAX'):
+    """Compute similarity from each concept from the first list to all concepts(list or single concept, each concept is {id}, {kbname} is separate parameter) from the second list as a whole.
+      Links of second list concepts(each concept is {id}, {kbname} is separate parameter) are collected together, thus forming a "virtual" article, similarity to which is computed.
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
-    first = self.__wrapConcepts(concepts)
+    first = self.__wrapConcepts(concepts, kbname)
     first += 'linkWeight={};'.format(linkWeight)
-    second = self.__wrapConcepts(virtualAricle)
+    second = self.__wrapConcepts(virtualAricle, kbname)
     return self.__presetKBM('similarityToVirtualArticle', [first, second])
 
-  def similarityBetweenVirtualArticles(self, firstVirtualAricle, secondVirtualArticle, linkWeight='MAX'):
-    """Compute similarity between two sets of concepts(list or single concept, each concept is {id}:{kbname}) as between "virtual" articles from these sets.
+  def similarityBetweenVirtualArticles(self, firstVirtualAricle, secondVirtualArticle, kbname, linkWeight='MAX'):
+    """Compute similarity between two sets of concepts(list or single concept, each concept is {id}, {kbname} is separate parameter) as between "virtual" articles from these sets.
       The links of each virtual article are composed of links of the collection of concepts.
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
-    first = self.__wrapConcepts(firstVirtualAricle)
+    first = self.__wrapConcepts(firstVirtualAricle, kbname)
     first += 'linkWeight={};'.format(linkWeight)
-    second = self.__wrapConcepts(secondVirtualArticle)
+    second = self.__wrapConcepts(secondVirtualArticle, kbname)
     return self.__presetKBM('similarityBetweenVirtualArticles', [first, second])
 
-  def similarOverFirstNeighbours(self, concepts, linkWeight='MAX', offset=None, limit=None):
-    """Search for similar concepts among the first neighbours of the given ones(list or single concept, each concept is {id}:{kbname}).
+  def similarOverFirstNeighbours(self, concepts, kbname, linkWeight='MAX', offset=None, limit=None):
+    """Search for similar concepts among the first neighbours of the given ones(list or single concept, each concept is {id}, {kbname} is separate parameter).
       linkWeight specifies method for computation of link weight in case of multiple link types.
       offset provides a possibility to skip several concepts from the start of the result.
       limit provides a possibility to limit size of result.
       check REST Documentation for values"""
-    path = '{0};linkWeight={1}'.format(self.__wrapConcepts(concepts), linkWeight)
+    path = '{0};linkWeight={1}'.format(self.__wrapConcepts(concepts, kbname), linkWeight)
     query = {}
     if offset:
       query.update({'offset': offset})
@@ -494,13 +486,13 @@ class TexterraAPI(modisapi.ModisAPI):
       query.update({'limit': limit})
     return self.__presetKBM('similarOverFirstNeighbours', path, query)
 
-  def similarOverFilteredNeighbours(self, concepts, linkWeight='MAX', offset=None, limit=None, among=None):
-    """Search for similar concepts over filtered set of the first and the second neighbours of the given ones(list or single concept, each concept is {id}:{kbname}).
+  def similarOverFilteredNeighbours(self, concepts, kbname, linkWeight='MAX', offset=None, limit=None, among=None):
+    """Search for similar concepts over filtered set of the first and the second neighbours of the given ones(list or single concept, each concept is {id}, {kbname} is separate parameter).
       linkWeight specifies method for computation of link weight in case of multiple link types.
       offset provides a possibility to skip several concepts from the start of the result.
       limit provides a possibility to limit size of result.
       check REST Documentation for values"""
-    path = '{0};linkWeight={1}'.format(self.__wrapConcepts(concepts), linkWeight)
+    path = '{0};linkWeight={1}'.format(self.__wrapConcepts(concepts, kbname), linkWeight)
     query = {}
     if offset:
       query.update({'offset': offset})
@@ -510,8 +502,8 @@ class TexterraAPI(modisapi.ModisAPI):
       query.update({'among': among})
     return self.__presetKBM('similarOverFilteredNeighbours', path, query)
 
-  def getAttributes(self, concepts, atrList=[]):
-    """Get attributes for concepts(list or single concept, each concept is {id}:{kbname}).
+  def getAttributes(self, concepts, kbname, atrList=[]):
+    """Get attributes for concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
       Supported attributes:
         coordinates - GPS coordinates
         definition - brief concept definition
@@ -523,7 +515,7 @@ class TexterraAPI(modisapi.ModisAPI):
         <language> - language code, like: en, de, fr, ko, ru, ...
         type - concept type"""
     params = {'attribute': atrList}
-    return self.customQuery('walker/{}'.format(self.__wrapConcepts(concepts)), params)
+    return self.customQuery('walker/{}'.format(self.__wrapConcepts(concepts, kbname)), params)
 
 
   def customQuery(self, path, query, form=None):
