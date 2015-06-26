@@ -442,6 +442,12 @@ class TexterraAPI(modisapi.ModisAPI):
   def similarityGraph(self, concepts, kbname, linkWeight='MAX'):
     """Compute similarity for each pair of concepts(list or single concept, each concept is {id}, kbname is separated).
       linkWeight specifies method for computation of link weight in case of multiple link types - check REST Documentation for values"""
+    if isinstance(concepts, int):
+      return {concepts: 1.0}
+    if len(concepts) == 0:
+      return {}
+    if len(concepts) == 1:
+      return {concepts[0]: 1.0}
     param = self.__wrapConcepts(concepts, kbname)
     param += 'linkWeight=' + linkWeight
     return self.__transformGraph(concepts, self.__presetKBM('similarityGraph', param)['full-similarity-graph'])

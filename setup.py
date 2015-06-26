@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='modis',
-    version='0.3.0',
+    version='0.3.1',
     packages=['modis'],
     install_requires=[
       'requests',

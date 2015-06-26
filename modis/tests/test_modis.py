@@ -132,6 +132,8 @@ class TexterraAPITest(unittest.TestCase):
     self.assertIsInstance(self.texterra.neighboursSize([12, 713], 'enwiki', linkType='RELATED', nodeType='REGULAR', minDepth=1, maxDepth=3), dict)
 
   def test_similarityGraph(self):
+    self.assertIsInstance(self.texterra.similarityGraph([13137], 'enwiki'), dict)
+    self.assertIsInstance(self.texterra.similarityGraph(13137, 'enwiki'), dict)
     self.assertIsInstance(self.texterra.similarityGraph([12, 13137, 156327], 'enwiki'), dict)
     self.assertIsInstance(self.texterra.similarityGraph([12, 13137, 156327], 'enwiki', 'MIN'), dict)
 
