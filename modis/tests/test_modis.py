@@ -5,17 +5,14 @@ from modis import twitterapi
 from modis import texterraapi
 
 import os
-from os.path import join, dirname
+from os.path import join, dirname, abspath
 from dotenv import load_dotenv
-
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
 
 # Texterra Tests
 
 class TexterraAPITest(unittest.TestCase):
   def setUp(self):
-    dotenv_path = join(dirname(__file__), '.env')
+    dotenv_path = join(dirname(__file__), '..', '..', '.env')
     load_dotenv(dotenv_path)
 
     TEXTERRA_KEY = os.environ.get("TEXTERRA_KEY")
