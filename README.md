@@ -9,25 +9,25 @@ python setup.py install
 
 2. You can use pydoc to list available services
 ```
-pydoc modis
+pydoc ispras
 ```
 and check methods for each service
 ```
-pydoc modis.texterra
+pydoc ispras.texterra
 ```
 
-3. To use any service of ModisAPI in your project, import subclass of module. For TexterraAPI it looks like this: 
+3. To use any service of ISPRAS API in your project, import subclass of module. For TexterraAPI it looks like this: 
 ```python
-from modis import texterraapi
+from ispras import texterra
 ```
 
 4. Now you can create an access object using your Apikey:
 ```python
-t = texterraapi.TexterraAPI('YOURKEY')
+t = texterra.API('YOURKEY')
 ```
 You can also specify service name and version:
 ```python
-t = texterraapi.TexterraAPI('YOURKEY', 'texterra', 'v3.1')
+t = texterra.API('YOURKEY', 'texterra', 'v3.1')
 ```
 
 5. To access different tools just call corresponding method:

@@ -2,7 +2,7 @@
 import xmltodict
 import requests
 
-class ModisAPI(object):
+class API(object):
   ROOT_URL = 'http://api.ispras.ru/{0}/{1}/'
 
   def __init__(self, key, name, ver):
@@ -11,13 +11,13 @@ class ModisAPI(object):
       self.serviceName = name
       self.serviceVersion = ver
       self.apikey = key
-      self.url = ModisAPI.ROOT_URL.format(name, ver)
+      self.url = API.ROOT_URL.format(name, ver)
     else:
       print('Please provide proper apikey')
       sys.exit(0)
 
   def GET(self, path, request_params):
-    """Method for invoking ModisAPI GET request"""
+    """Method for invoking Ispras API GET request"""
     url = self.url + path;
     request_params['apikey'] = self.apikey
     page = requests.get(url, params=request_params, timeout=60)
@@ -28,7 +28,7 @@ class ModisAPI(object):
       page.raise_for_status()
 
   def POST(self, path, request_params, form_params):
-    """Method for invoking ModisAPI POST request"""
+    """Method for invoking Ispras API POST request"""
     url = self.url + path;
     request_params['apikey'] = self.apikey
     page = requests.post(url, params=request_params, data=form_params, timeout=60)

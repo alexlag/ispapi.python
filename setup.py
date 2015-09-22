@@ -3,12 +3,12 @@ ez_setup.use_setuptools()
 from setuptools import setup
 
 setup(
-    name='modis',
-    version='0.3.1',
-    packages=['modis'],
-    install_requires=[
+  name='ispras',
+  version='1.0.0',
+  packages=['ispras'],
+  install_requires=[
       'requests',
       'xmltodict'
   ],
-    py_modules=['modis'],
+  py_modules=['ispras'],
 )

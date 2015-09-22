@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
 import requests
-from modis import twitterapi
-from modis import texterraapi
+from ispras import twitter
+from ispras import texterra
 
 import os
 from os.path import join, dirname, abspath
@@ -18,7 +18,7 @@ class TexterraAPITest(unittest.TestCase):
     TEXTERRA_KEY = os.environ.get("TEXTERRA_KEY")
     TEXTERRA_SERVICE_NAME = os.environ.get("TEXTERRA_SERVICE_NAME")
     TEXTERRA_SERVICE_VERSION = os.environ.get("TEXTERRA_SERVICE_VERSION")
-    self.texterra = texterraapi.TexterraAPI(TEXTERRA_KEY, TEXTERRA_SERVICE_NAME, TEXTERRA_SERVICE_VERSION)
+    self.texterra = texterra.API(TEXTERRA_KEY, TEXTERRA_SERVICE_NAME, TEXTERRA_SERVICE_VERSION)
 
     self.en_text = 'Apple today updated iMac to bring numerous high-performance enhancements to the leading all-in-one desktop. iMac now features fourth-generation Intel Core processors, new graphics, and next-generation Wi-Fi. In addition, it now supports PCIe-based flash storage, making its Fusion Drive and all-flash storage options up to 50 percent faster than the previous generation'
     self.ru_text = 'Первые в этом году переговоры министра иностранных дел России Сергея Лаврова и госсекретаря США Джона Керри, длившиеся 1,5 часа, завершились в Мюнхене.'
@@ -167,7 +167,7 @@ class TwitterAPITest(unittest.TestCase):
     DDE_KEY = os.environ.get("DDE_KEY")
     DDE_SERVICE_NAME = os.environ.get("DDE_SERVICE_NAME")
     DDE_SERVICE_VERSION = os.environ.get("DDE_SERVICE_VERSION")
-    self.twitter = twitterapi.TwitterAPI(DDE_KEY, DDE_SERVICE_NAME, DDE_SERVICE_VERSION)
+    self.twitter = twitter.API(DDE_KEY, DDE_SERVICE_NAME, DDE_SERVICE_VERSION)
 
   def test_extract_dde(self):
     self.assertIsInstance(self.twitter.extractDDE('en', 'Ann', 'bob', 'I am Ann from NY', 'Hi there, I am Ann fromNY'), dict)

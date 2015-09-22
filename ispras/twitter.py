@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from . import modisapi
-class TwitterAPI(modisapi.ModisAPI):
+from . import ispras
+class API(ispras.API):
   """This class provides methods to work with Twitter NLP REST via OpenAPI"""
 
   # Default Twitter NLP path
@@ -15,10 +15,10 @@ class TwitterAPI(modisapi.ModisAPI):
   def __init__(self, key, name=None, ver=None):
     """Provide only apikey to use default Twitter NLP service name and version."""
     if name == None:
-      name = TwitterAPI.twitterName
+      name = API.twitterName
     if ver == None:
-      ver = TwitterAPI.twitterVersion
-    modisapi.ModisAPI.__init__(self, key, name, ver)
+      ver = API.twitterVersion
+    ispras.API.__init__(self, key, name, ver)
 
   def extractDDE(self, lang, username, screenname, description, tweets):
     """Extracts demographic attributes from provided Twitter info. All info is required, but can be empty"""

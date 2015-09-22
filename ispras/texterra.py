@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from . import modisapi
+from . import ispras
 
-class TexterraAPI(modisapi.ModisAPI):
+class API(ispras.API):
   """This class provides methods to work with Texterra REST via OpenAPI, including NLP and EKB methods and custom queriesю
     Note that NLP methods return annotations only"""
 
@@ -193,10 +193,10 @@ class TexterraAPI(modisapi.ModisAPI):
   def __init__(self, key, name=None, ver=None):
     """Provide only apikey to use default Texterra service name and version."""
     if name == None:
-      name = TexterraAPI.texterraName
+      name = API.texterraName
     if ver == None:
-      ver = TexterraAPI.texterraVersion
-    modisapi.ModisAPI.__init__(self, key, name, ver)
+      ver = API.texterraVersion
+    ispras.API.__init__(self, key, name, ver)
 
   # Section of NLP methods
   # NLP basic helper methods
@@ -319,7 +319,7 @@ class TexterraAPI(modisapi.ModisAPI):
       If domain isn't provided, Domain detection is applied, this way method tries to achieve best results.
       If no domain is detected general domain algorithm is applied.
         Note: this method returns Texterra annotations"""
-    specs = TexterraAPI.NLPSpecs['domainPolarityDetection']
+    specs = API.NLPSpecs['domainPolarityDetection']
     if domain != '':
       domain = '({})'.format(domain)
 
@@ -533,7 +533,7 @@ class TexterraAPI(modisapi.ModisAPI):
 
   def __presetNLP(self, methodName, text):
     """Utility NLP part method"""
-    specs = TexterraAPI.NLPSpecs[methodName]
+    specs = API.NLPSpecs[methodName]
     try:
       result = self.customQuery(specs['path'], specs['params'], {'text': text})['NLP-document']['annotations']['I-annotation']
     except KeyError:
@@ -553,7 +553,7 @@ class TexterraAPI(modisapi.ModisAPI):
 
   def __presetKBM(self, methodName, pathParam, queryParam={}):
     """Utility EKB part method"""
-    specs = TexterraAPI.KBMSpecs[methodName]
+    specs = API.KBMSpecs[methodName]
     queryParam.update(specs['params'])
     if isinstance(pathParam, list):
       result = self.customQuery(specs['path'].format(*pathParam), queryParam)
