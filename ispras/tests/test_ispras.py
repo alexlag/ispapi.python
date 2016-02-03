@@ -8,13 +8,23 @@ import os
 from os.path import join, dirname, abspath
 from dotenv import load_dotenv
 
+dotenv_path = join(dirname(__file__), '..', '..', '.env')
+load_dotenv(dotenv_path)
+
 # Texterra Tests
+
+class CustomTexterraAPITest(unittest.TestCase):
+  def setUp(self):
+    TEXTERRA_CUSTOM_HOST = os.environ.get("TEXTERRA_CUSTOM_HOST")
+    self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST)
+
+  def test_custom_termPresence(self):
+    res = self.custom_texterra.termPresence('Anarchism')
+    self.assertIsInstance(res, dict)
+    self.assertEqual('true', res['presence'])
 
 class TexterraAPITest(unittest.TestCase):
   def setUp(self):
-    dotenv_path = join(dirname(__file__), '..', '..', '.env')
-    load_dotenv(dotenv_path)
-
     TEXTERRA_KEY = os.environ.get("TEXTERRA_KEY")
     TEXTERRA_SERVICE_NAME = os.environ.get("TEXTERRA_SERVICE_NAME")
     TEXTERRA_SERVICE_VERSION = os.environ.get("TEXTERRA_SERVICE_VERSION")

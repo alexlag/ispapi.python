@@ -12,13 +12,14 @@ class API(ispras.API):
     'params': {}
   }
 
-  def __init__(self, key, name=None, ver=None):
+  def __init__(self, key='', name=None, ver=None, host=None):
     """Provide only apikey to use default Twitter NLP service name and version."""
-    if name == None:
-      name = API.twitterName
-    if ver == None:
-      ver = API.twitterVersion
-    ispras.API.__init__(self, key, name, ver)
+    if host == None:
+      if name == None: name = API.twitterName
+      if ver == None: ver = API.twitterVersion
+      ispras.API.__init__(self, key, name, ver)
+    else:
+      ispras.API.__init__(self, host=host)
 
   def extractDDE(self, lang, username, screenname, description, tweets):
     """Extracts demographic attributes from provided Twitter info. All info is required, but can be empty"""

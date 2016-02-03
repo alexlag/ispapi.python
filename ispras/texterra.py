@@ -190,13 +190,14 @@ class API(ispras.API):
   }
 
 
-  def __init__(self, key, name=None, ver=None):
+  def __init__(self, key='', name=None, ver=None, host=None):
     """Provide only apikey to use default Texterra service name and version."""
-    if name == None:
-      name = API.texterraName
-    if ver == None:
-      ver = API.texterraVersion
-    ispras.API.__init__(self, key, name, ver)
+    if host == None:
+      if name == None: name = API.texterraName
+      if ver == None: ver = API.texterraVersion
+      ispras.API.__init__(self, key, name, ver)
+    else:
+      ispras.API.__init__(self, host=host)
 
   # Section of NLP methods
   # NLP basic helper methods
