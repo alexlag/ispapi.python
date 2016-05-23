@@ -500,7 +500,7 @@ class API(ispras.API):
       limit provides a possibility to limit size of result.
       check REST Documentation for values"""
     path = '{0};linkWeight={1}'.format(self.__wrapConcepts(concepts, kbname), linkWeight)
-    query = {}
+    query = {'among': ''}
     if offset:
       query.update({'offset': offset})
     if limit:
