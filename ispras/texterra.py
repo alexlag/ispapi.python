@@ -14,28 +14,28 @@ class API(ispras.API):
     'languageDetection': {
         'path': 'nlp/language',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.Language',
+          'class': 'language',
           'filtering': 'KEEPING'
         }
     },
     'sentenceDetection': {
         'path': 'nlp/sentence',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.Sentence',
+          'class': 'sentence',
           'filtering': 'KEEPING'
         }
     },
     'tokenization': {
         'path': 'nlp/token',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.Token',
+          'class': 'token',
           'filtering': 'KEEPING'
         }
     },
     'lemmatization': {
         'path': 'nlp/lemma',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.Lemma',
+          'class': 'lemma',
           'filtering': 'KEEPING'
         }
     },
@@ -49,28 +49,28 @@ class API(ispras.API):
     'spellingCorrection': {
         'path': 'nlp/spellingcorrection',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.SpellingCorrection',
+          'class': 'spelling-correction-token',
           'filtering': 'KEEPING'
         }
     },
     'namedEntities': {
         'path': 'nlp/namedentity',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.ne.NamedEntityToken',
+          'class': 'named-entity',
           'filtering': 'KEEPING'
         }
     },
     'termDetection': {
         'path': 'nlp/term',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.Frame',
+          'class': 'frame',
           'filtering': 'KEEPING'
         }
     },
     'disambiguation': {
         'path': 'nlp/disambiguation',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.DisambiguatedPhrase',
+          'class': 'dmb-phrase',
           'filtering': 'KEEPING'
         }
 
@@ -78,7 +78,7 @@ class API(ispras.API):
     'keyConcepts': {
         'path': 'nlp/keyconcepts',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.KeyconceptsSemanticContext',
+          'class': 'keyconcepts-sc',
           'filtering': 'KEEPING'
         }
 
@@ -94,7 +94,7 @@ class API(ispras.API):
     'subjectivityDetection': {
         'path': 'nlp/subjectivity',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.SentimentSubjectivity',
+          'class': 'sentiment-subjectivity',
           'filtering': 'KEEPING'
         }
 
@@ -102,7 +102,7 @@ class API(ispras.API):
     'polarityDetection': {
         'path': 'nlp/polarity',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.SentimentPolarity',
+          'class': 'sentiment-polarity',
           'filtering': 'KEEPING'
         }
 
@@ -134,7 +134,7 @@ class API(ispras.API):
     'syntaxDetection': {
         'path': 'nlp/syntax',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.syntax.SyntaxRelation',
+          'class': 'syntax-relation',
           'filtering': 'KEEPING'
         }
 

@@ -63,8 +63,7 @@ class TexterraAPITest(unittest.TestCase):
 
   def test_tweetNormalization(self):
     self.assertIsInstance(self.texterra.tweetNormalization(self.en_tweet), list)
-    with self.assertRaises(requests.exceptions.HTTPError):
-      self.texterra.tweetNormalization(self.ru_tweet)
+    self.assertIsInstance(self.texterra.tweetNormalization(self.ru_tweet), list)
 
   def test_syntaxDetection(self):
     self.assertIsInstance(self.texterra.syntaxDetection(self.ru_text), list)
