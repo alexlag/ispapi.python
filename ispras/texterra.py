@@ -194,22 +194,12 @@ class API(ispras.API):
     """Key concepts are the concepts providing short (conceptual) and informative text description.
     This service extracts a set of key concepts for a given text.
       Note: this method returns list of weighted key concepts"""
-    try:
-      result = []
-      keyConcepts = self.keyConceptsAnnotate(text)[0]['value']['concepts-weights']['entry']
-      if isinstance(keyConcepts, dict):
-        keyConcepts = [keyConcepts]
-      for keyConcept in keyConcepts:
-        keyConcept['concept']['weight'] = keyConcept['double']
-        result.append(keyConcept['concept'])
-      return result
-    except KeyError:
-      return []
+    return self.keyConceptsAnnotate(text)['annotations']['keyconcepts'][0]['value']
 
   def sentimentAnalysis(self, text):
     """Detects whether the given text has positive, negative or no sentiment."""
     try:
-      return self.polarityDetectionAnnotate(text)[0]['value']['#text']
+      return self.polarityDetectionAnnotate(text)['annotations']['polarity'][0]['value']
     except:
       return 'NEUTRAL'
 
@@ -217,15 +207,12 @@ class API(ispras.API):
     """Detects whether the given text has positive, negative, or no sentiment, with respect to domain.
       If domain isn't provided, Domain detection is applied, this way method tries to achieve best results.
       If no domain is detected general domain algorithm is applied."""
+    annotations = self.domainPolarityDetectionAnnotate(text, domain)['annotations']
     try:
       usedDomain = 'general'
       sentiment = 'NEUTRAL'
-      annotations = self.domainPolarityDetectionAnnotate(text, domain)
-      for an in annotations:
-        if 'SentimentPolarity' in an['@class']:
-          sentiment = an['value']['#text']
-        if 'DomainAnnotation' in an['@class']:
-          usedDomain = an['value']['#text']
+      usedDomain = annotations['domain'][0]['value']
+      sentiment = annotations['polarity'][0]['value']
     except KeyError:
       pass
     return { 'domain' :usedDomain, 'polarity': sentiment }
@@ -233,101 +220,94 @@ class API(ispras.API):
   def disambiguation(self, text):
     """Detects the most appropriate meanings (concepts) for terms occurred in a given text.
       Note: this method returns Texterra annotations"""
-    return self.disambiguationAnnotate(text)
+    return self.disambiguationAnnotate(text)['annotations']['disambiguated-phrase']
 
   # NLP annotating methods
   def languageDetectionAnnotate(self, text):
     """Detects language of given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('languageDetection', text)
 
   def sentenceDetectionAnnotate(self, text):
     """Detects boundaries of sentences in a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('sentenceDetection', text)
 
   def tokenizationAnnotate(self, text):
     """Detects all tokens (minimal significant text parts) in a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('tokenization', text)
 
   def lemmatizationAnnotate(self, text):
     """Detects lemma of each word of a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('lemmatization', text)
 
   def posTaggingAnnotate(self, text):
     """Detects part of speech tag for each word of a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('posTagging', text)
 
   def spellingCorrectionAnnotate(self, text):
     """Tries to correct disprints and other spelling errors in a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('spellingCorrection', text)
 
   def namedEntitiesAnnotate(self, text):
     """Finds all named entities occurences in a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('namedEntities', text)
 
   def termDetectionAnnotate(self, text):
     """Extracts not overlapping terms within a given text; term is a textual representation for some concept of the real world.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('termDetection', text)
 
   def disambiguationAnnotate(self, text):
     """Detects the most appropriate meanings (concepts) for terms occurred in a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('disambiguation', text)
 
   def keyConceptsAnnotate(self, text):
     """Key concepts are the concepts providing short (conceptual) and informative text description.
     This service extracts a set of key concepts for a given text.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('keyConcepts', text)
 
   def domainDetectionAnnotate(self, text):
     """Detects the most appropriate domain for the given text.
       Currently only 2 specific domains are supported: 'movie' and 'politics'
       If no domain from this list has been detected, the text is assumed to be no domain, or general domain.
-        Note: this method returns Texterra annotations"""
+        Note: this method returns Texterra document"""
     return self.__presetNLP('domainDetection', text)
 
   def subjectivityDetectionAnnotate(self, text):
     """Detects whether the given text is subjective or not.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('subjectivityDetection', text)
 
   def polarityDetectionAnnotate(self, text):
     """Detects whether the given text has positive, negative or no sentiment.
-      Note: this method returns Texterra annotations"""
+      Note: this method returns Texterra document"""
     return self.__presetNLP('polarityDetection', text)
 
   def domainPolarityDetectionAnnotate(self, text, domain=''):
     """Detects whether the given text has positive, negative, or no sentiment, with respect to domain.
       If domain isn't provided, Domain detection is applied, this way method tries to achieve best results.
       If no domain is detected general domain algorithm is applied.
-        Note: this method returns Texterra annotations"""
+        Note: this method returns Texterra document"""
     specs = API.NLPSpecs['domainPolarityDetection']
     if domain != '':
       domain = '({})'.format(domain)
-
-    try:
-      result = self.customQuery(specs['path'].format(domain), specs['params'], {'text': text})['NLP-document']['annotations']['I-annotation']
-    except KeyError:
-      return []
-
-    if isinstance(result, dict):
-      result = [result]
-    if not isinstance(result, list):
-      raise Exception
-
-    for an in result:
-      start = int(an['start'])
-      end = int(an['end'])
-      an['text'] = text[start:end]
-      an['annotated-text'] = text
+        
+    result = self.POST(specs['path'].format(domain), specs['params'], {'text': text}, 'json')
+    annotations = result['annotations']
+    import sys
+    it = annotations.items() if sys.version_info[0] == 3 else annotations.iteritems()
+    for k,v in it:
+        for an in v:
+          an['text'] = text[an['start']:an['end']]
+          an['annotated-text'] = text
     return result
 
   def tweetNormalization(self, text):
@@ -338,7 +318,7 @@ class API(ispras.API):
   def syntaxDetection(self, text):
     """Detects syntax relations """
     result = self.__presetNLP('syntaxDetection', text)
-    for an in result:
+    for an in result['annotations']['syntax-relation']:
       if 'parent-token' in an['value']:
         start = int(an['value']['parent-token']['start'])
         end = int(an['value']['parent-token']['end'])
@@ -524,22 +504,16 @@ class API(ispras.API):
 
   def __presetNLP(self, methodName, text):
     """Utility NLP part method"""
+    import sys
+
     specs = API.NLPSpecs[methodName]
-    try:
-      result = self.customQuery(specs['path'], specs['params'], {'text': text})['NLP-document']['annotations']['I-annotation']
-    except KeyError:
-      return []
-
-    if isinstance(result, dict):
-      result = [result]
-    if not isinstance(result, list):
-      raise Exception
-
-    for an in result:
-      start = int(an['start'])
-      end = int(an['end'])
-      an['text'] = text[start:end]
-      an['annotated-text'] = text
+    result = self.POST(specs['path'], specs['params'], {'text': text}, 'json')
+    annotations = result['annotations']
+    it = annotations.items() if sys.version_info[0] == 3 else annotations.iteritems()
+    for k,v in it:
+        for an in v:
+          an['text'] = text[an['start']:an['end']]
+          an['annotated-text'] = text
     return result
 
   def __presetKBM(self, methodName, pathParam, queryParam={}):
