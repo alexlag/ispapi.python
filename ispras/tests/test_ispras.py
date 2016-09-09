@@ -18,10 +18,8 @@ class CustomTexterraAPITest(unittest.TestCase):
     TEXTERRA_CUSTOM_HOST = os.environ.get("TEXTERRA_CUSTOM_HOST")
     self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST)
 
-  def test_custom_termPresence(self):
-    res = self.custom_texterra.termPresence('Anarchism')
-    self.assertIsInstance(res, dict)
-    self.assertEqual('true', res['presence'])
+  def test_custom_getAttributes(self):
+    self.assertIsInstance(self.custom_texterra.getAttributes(12, 'enwiki'), dict)
 
 class TexterraAPITest(unittest.TestCase):
   def setUp(self):
@@ -110,20 +108,18 @@ class TexterraAPITest(unittest.TestCase):
     self.assertIsInstance(self.texterra.subjectivityDetectionAnnotate(self.en_tweet), list)
     self.assertIsInstance(self.texterra.subjectivityDetectionAnnotate(self.ru_tweet), list)
 
-  def test_termPresence(self):
-    res = self.texterra.termPresence('Anarchism')
+  def test_representationTerms(self):
+    termCandidates = [
+      { 'start': 0, 'end': 5 },
+      { 'start': 6, 'end': 11 }
+    ]
+    featureType = ['commonness', 'info-measure']
+    res = self.texterra.representationTerms(self.en_text, termCandidates, featureType)
     self.assertIsInstance(res, dict)
-    self.assertEqual('true', res['presence'])
-
-  def test_termInfoMeasure(self):
-    self.assertIsInstance(self.texterra.termInfoMeasure('Anarchism'), dict)
-
-  def test_termMeanings(self):
-    self.assertIsInstance(self.texterra.termMeanings('android'), dict)
-
-  def test_termCommonness(self):
-    self.assertIsInstance(self.texterra.termCommonness('android'), dict)
-    self.assertIsInstance(self.texterra.termCommonness('android', 713, 'enwiki'), dict)
+    self.assertEqual(res['text'], self.en_text)
+    self.assertIsInstance(res['annotations'], dict)
+    self.assertIsInstance(res['annotations']['commonness'], list)
+    self.assertIsInstance(res['annotations']['info-measure'], list)
 
   def test_neignbours(self):
     self.assertIsInstance(self.texterra.neighbours(12, 'enwiki'), dict)

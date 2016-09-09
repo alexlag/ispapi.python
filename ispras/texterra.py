@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import requests
+import json
 from . import ispras
 
 class API(ispras.API):
@@ -42,7 +44,7 @@ class API(ispras.API):
     'posTagging': {
         'path': 'nlp/pos',
         'params': {
-          'class': 'ru.ispras.texterra.core.nlp.datamodel.pos.POSToken',
+          'class': 'pos-token',
           'filtering': 'KEEPING'
         }
     },
@@ -70,7 +72,7 @@ class API(ispras.API):
     'disambiguation': {
         'path': 'nlp/disambiguation',
         'params': {
-          'class': 'dmb-phrase',
+          'class': 'disambiguated-phrase',
           'filtering': 'KEEPING'
         }
 
@@ -78,7 +80,7 @@ class API(ispras.API):
     'keyConcepts': {
         'path': 'nlp/keyconcepts',
         'params': {
-          'class': 'keyconcepts-sc',
+          'class': 'keyconcepts',
           'filtering': 'KEEPING'
         }
 
@@ -94,7 +96,7 @@ class API(ispras.API):
     'subjectivityDetection': {
         'path': 'nlp/subjectivity',
         'params': {
-          'class': 'sentiment-subjectivity',
+          'class': 'subjectivity',
           'filtering': 'KEEPING'
         }
 
@@ -102,7 +104,7 @@ class API(ispras.API):
     'polarityDetection': {
         'path': 'nlp/polarity',
         'params': {
-          'class': 'sentiment-polarity',
+          'class': 'polarity',
           'filtering': 'KEEPING'
         }
 
@@ -112,7 +114,7 @@ class API(ispras.API):
         'params': {
           'class': [
             'domain',
-            'sentiment-polarity'
+            'polarity'
           ],
           'filtering': 'KEEPING'
         }
@@ -137,26 +139,13 @@ class API(ispras.API):
           'class': 'syntax-relation',
           'filtering': 'KEEPING'
         }
-
     }
   }
 
   # Path and parameters for preset KBM queries
   KBMSpecs = {
-    'termPresence': {
-      'path': 'representation/{0}/contained',
-      'params': {}
-    },
-    'termInfoMeasure': {
-      'path': 'representation/{0}/infomeasure',
-      'params': {}
-    },
-    'termMeanings': {
-      'path': 'representation/{0}/meanings',
-      'params': {}
-    },
-    'termCommonness': {
-      'path': 'representation/{0}/commonness/{1}',
+    'representationTerms': {
+      'path': 'representation/terms',
       'params': {}
     },
     'neighbours': {
@@ -365,23 +354,24 @@ class API(ispras.API):
     else:
       return 'id={0}:{1};'.format(concepts, kbname)
 
-  def termPresence(self, term):
-    """Determines if Knowledge base contains the specified term."""
-    return self.__presetKBM('termPresence', term)
-
-  def termInfoMeasure(self, term):
-    """Returns information measure for the given term. Information measure denotes, how often given term is used as link caption among all its occurences."""
-    return self.__presetKBM('termInfoMeasure', term)
-
-  def termMeanings(self, term):
-    """Return concepts resource from the Knowledge base corresponding to the found meanings of the given term."""
-    return self.__presetKBM('termMeanings', term)
-
-  def termCommonness(self, term, cid=None, kbname=None):
-    """If concept isn't provided, returns concepts with their commonness, corresponding to the found meanings of the given term. Commonness denotes, how often the given term is associated with the given concept.
-      With concept(format is {id} and {kbname}) returns commonness of given concept for the given term."""
-    concept = 'id={0}:{1}'.format(cid, kbname) if cid is not None else ''
-    return self.__presetKBM('termCommonness', [term, concept])
+  def representationTerms(self, text, termCandidates, featureType=['commonness', 'info-measure']):
+    """Determines if Knowledge base contains the specified terms and computes features of the specified types for them."""
+    specs = API.KBMSpecs['representationTerms']
+    queryParam = specs['params']
+    queryParam['featureType'] = featureType
+    url = self.url + specs['path']
+    if self.apikey: queryParam['apikey'] = self.apikey
+    payload = {
+      'text': text,
+      'annotations': {
+        'term-candidate': termCandidates
+      }
+    }
+    page = requests.post(url, params=queryParam, json=payload, timeout=60)
+    if page.status_code == 200:
+      return page.json()
+    else:
+      page.raise_for_status()
 
   def neighbours(self, concepts, kbname, linkType=None, nodeType=None, minDepth=None, maxDepth=None):
     """Return neighbour concepts for the given concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
