@@ -51,13 +51,13 @@ class TexterraAPITest(unittest.TestCase):
     self.assertIsInstance(self.texterra.sentimentAnalysis(self.ru_tweet), str if sys.version_info[0] == 3 else basestring)
 
   def test_domainSentimentAnalysis(self):
-    #self.assertIsInstance(self.texterra.domainSentimentAnalysis(self.en_text), dict)
-    #self.assertIsInstance(self.texterra.domainSentimentAnalysis(self.ru_text), dict)
+    self.assertIsInstance(self.texterra.domainSentimentAnalysis(self.en_text), dict)
+    self.assertIsInstance(self.texterra.domainSentimentAnalysis(self.ru_text), dict)
     res = self.texterra.domainSentimentAnalysis(self.en_tweet, 'politics')
     self.assertIsInstance(res, dict)
     self.assertEqual('politics', res['domain'])
-    #with self.assertRaises(requests.exceptions.HTTPError):
-      #self.texterra.domainSentimentAnalysis(self.ru_text, 'politics')
+    with self.assertRaises(requests.exceptions.HTTPError):
+      self.texterra.domainSentimentAnalysis(self.ru_text, 'politics')
 
   def test_tweetNormalization(self):
     self.assertIsInstance(self.texterra.tweetNormalization(self.en_tweet), dict)
