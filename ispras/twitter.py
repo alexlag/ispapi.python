@@ -19,7 +19,7 @@ class API(ispras.API):
       if ver == None: ver = API.twitterVersion
       ispras.API.__init__(self, key, name, ver)
     else:
-      ispras.API.__init__(self, host=host)
+      ispras.API.__init__(self, host=host, key=key)
 
   def extractDDE(self, lang, username, screenname, description, tweets):
     """Extracts demographic attributes from provided Twitter info. All info is required, but can be empty"""

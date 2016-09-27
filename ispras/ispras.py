@@ -5,9 +5,9 @@ import requests
 class API(object):
   API_URL = 'http://api.ispras.ru/{0}/{1}/'
 
-  def __init__(self, key='', name=None, ver=None, host=None):
+  def __init__(self, key=False, name=None, ver=None, host=None):
     if host:
-      self.apikey = False
+      self.apikey = key
       self.url = host
     else:
       import sys

@@ -186,7 +186,7 @@ class API(ispras.API):
       if ver == None: ver = API.texterraVersion
       ispras.API.__init__(self, key, name, ver)
     else:
-      ispras.API.__init__(self, host=host)
+      ispras.API.__init__(self, host=host, key=key)
 
   # Section of NLP methods
   # NLP basic helper methods
@@ -299,7 +299,7 @@ class API(ispras.API):
     specs = API.NLPSpecs['domainPolarityDetection']
     if domain != '':
       domain = '({})'.format(domain)
-        
+
     result = self.POST(specs['path'].format(domain), specs['params'], {'text': text}, 'json')
     annotations = result['annotations']
     import sys

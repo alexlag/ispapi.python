@@ -16,7 +16,8 @@ load_dotenv(dotenv_path)
 class CustomTexterraAPITest(unittest.TestCase):
   def setUp(self):
     TEXTERRA_CUSTOM_HOST = os.environ.get("TEXTERRA_CUSTOM_HOST")
-    self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST)
+    TEXTERRA_CUSTOM_KEY = os.environ.get("TEXTERRA_CUSTOM_KEY")
+    self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST, key=TEXTERRA_CUSTOM_KEY)
 
   def test_custom_getAttributes(self):
     self.assertIsInstance(self.custom_texterra.getAttributes(12, 'enwiki'), dict)
