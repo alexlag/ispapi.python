@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
   name='ispras',
-  version='1.0.1',
+  version='1.0.2',
   packages=['ispras'],
   install_requires=[
       'requests',
