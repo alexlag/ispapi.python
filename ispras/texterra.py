@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
+import os
 from . import ispras
 
 class API(ispras.API):
@@ -179,7 +180,7 @@ class API(ispras.API):
   }
 
 
-  def __init__(self, key='', name=None, ver=None, host=None):
+  def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', False), name=None, ver=None, host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
     """Provide only apikey to use default Texterra service name and version."""
     if host == None:
       if name == None: name = API.texterraName

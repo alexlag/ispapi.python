@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-import os
 import xmltodict
 import requests
 
 class API(object):
   API_URL = 'http://api.ispras.ru/{0}/{1}/'
 
-  def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', False), name=None, ver=None, host=os.getenv('TEXTERRA_CUSTOM_HOST')):
+  def __init__(self, key=False, name=None, ver=None, host=None):
     if host:
       self.apikey = key
       self.url = host
